@@ -19,7 +19,7 @@ else
         cloud_destination="${cloud_backup_base}/${dir_name}/${timestamp}"
         data_size=$(du -sh "$to_backup_dir" | cut -f1)
 
-        echo -e "$timestamp $data_size\n\nUm die lokalen Daten zu restoren, führe:\n\t./restore_backup.sh -p $to_backup_dir/backup.txt -d <zielverzeichnis> -s local\n\nUm die Daten aus der Cloud zu restoren, führe:\n\t./restore_backup.sh -p $to_backup_dir/backup.txt -d <zielverzeichnis> -s cloud\n\n\n" >> "$to_backup_dir/backup.txt"
+        echo -e "\n\n\n$timestamp $data_size\n\nUm die lokalen Daten zu restoren, führe:\n\t./restore_backup.sh -p $to_backup_dir/backup.txt -d <zielverzeichnis> -s local\n\nUm die Daten aus der Cloud zu restoren, führe:\n\t./restore_backup.sh -p $to_backup_dir/backup.txt -d <zielverzeichnis> -s cloud" >> "$to_backup_dir/backup.txt"
         
         # Lokales Backup
         sudo mkdir -p "$local_destination"

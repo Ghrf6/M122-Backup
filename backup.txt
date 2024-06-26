@@ -36,3 +36,23 @@ Um die Daten aus der Cloud zu restoren, führe:
 
 
 
+
+
+
+17_10-2024.06.26 96K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s cloud
+
+
+
+17_10-2024.06.26 96K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s cloud
