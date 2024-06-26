@@ -1,2 +1,38 @@
 Letztes Backup: 14_54-2024.06.13
 Letztes Backup: 14_55-2024.06.13
+Letztes Backup: 16_56-2024.06.26, Datenmenge: 80K, Lokaler Pfad: /home/backup/M122-Backup/16_56-2024.06.26, Cloud Pfad: onedrive:/backup/M122-Backup/16_56-2024.06.26
+17_01-2024.06.26 80K um die lokalen Daten zu restoren führe: ./restore_backup.sh -l /home/backup/M122-Backup/17_01-2024.06.26 und für die Daten aus der Cloud: ./restore_backup.sh -c onedrive:/backup/M122-Backup/17_01-2024.06.26
+17_03-2024.06.26 80K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s cloud
+17_05-2024.06.26 84K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s cloud
+17_07-2024.06.26 84K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s cloud
+
+
+
+17_08-2024.06.26 84K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh -p /mnt/c/Projects/Scripting/M122-Backup/backup.txt -d <zielverzeichnis> -s cloud
+
+
+
