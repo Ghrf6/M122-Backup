@@ -28,10 +28,19 @@ else
         # Lokales Backup erstellen
         sudo mkdir -p "$local_destination"
         sudo cp -r "$to_backup_dir"/* "$local_destination"
+        
+        # Datenmenge berechnen
+        data_size=$(du -sh "$to_backup_dir" | cut -f1)
+        
         echo "Lokales Backup erstellt für: $to_backup_dir"
         
-        # Letztes Backup-Zeitstempel aktualisieren
-        echo "Letztes Backup: $timestamp" >> "$to_backup_dir/backup.txt"
+        # Letztes Backup-Zeitstempel, Pfade und Datenmenge aktualisieren
+        echo "Letztes Backup: $timestamp, Datenmenge: $data_size, Lokaler Pfad: $local_destination, Cloud Pfad: $cloud_destination" >> "$to_backup_dir/backup.txt"
+        
+        # Backup-Informationen in einem separaten Backup-Ordner speichern
+        backup_info_dir="${local_backup_base}/backup_info"
+        sudo mkdir -p "$backup_info_dir"
+        echo "Verzeichnis: $to_backup_dir, Zeit: $timestamp, Datenmenge: $data_size, Lokaler Pfad: $local_destination, Cloud Pfad: $cloud_destination" >> "${backup_info_dir}/backup.txt"
         
         # Cloud-Backup erstellen
         rclone copy "$local_destination" "$cloud_destination"
