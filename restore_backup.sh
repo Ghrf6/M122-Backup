@@ -1,51 +1,58 @@
 #!/bin/bash
 
-# Cloud-Backup-Verzeichnis (OneDrive Remote)
-cloud_backup_base="onedrive:/backup"
+path_to_backup=$1
+local_path=$2
+storage_option=$3
 
-# Lokales Verzeichnis, in dem das Backup gespeichert werden soll
-local_restore_base="/home/restore"
-
-# UUID des gewünschten Backups (als Argument übergeben)
-backup_uuid=$1
-
-if [ -z "$backup_uuid" ]; then
-    echo "Bitte geben Sie eine UUID an."
+help() {
+    echo "Help: $0 <path to backup> <local directory> <storage option>"
     exit 1
-fi
-
-# Funktion zur Suche des Backup-Verzeichnisses anhand der UUID
-find_backup_by_uuid() {
-    backup_info_dir="${local_backup_base}/backup_info"
-    backup_entry=$(grep "$backup_uuid" "${backup_info_dir}/backup.txt")
-    if [ -z "$backup_entry" ]; then
-        echo "Kein Backup mit der angegebenen UUID gefunden."
-        exit 1
-    else
-        echo "$backup_entry"
-    fi
 }
 
-# Backup-Eintrag suchen
-backup_entry=$(find_backup_by_uuid)
-backup_dir=$(echo "$backup_entry" | awk -F', ' '{print $3}' | awk -F': ' '{print $2}')
-timestamp=$(echo "$backup_entry" | awk -F', ' '{print $1}' | awk -F': ' '{print $2}')
-dir_name=$(basename "$backup_dir")
+# Check if the correct number of arguments are provided
+if [ "$#" -ne 3 ]; then
+    echo "Error: Incorrect number of arguments."
+    help
+fi
 
-# Cloud-Backup-Ziel
-cloud_backup_path="${cloud_backup_base}/${dir_name}/${timestamp}"
+# Validate the path to backup
+if [ -z "$path_to_backup" ]; then
+    echo "Error: Please provide a correct path."
+    help
+fi
 
-# Lokales Zielverzeichnis für das Restore
-local_restore_path="${local_restore_base}/${dir_name}/${timestamp}"
+# Validate the local directory
+if [ ! -d "$local_path" ]; then
+    echo "Error: The local directory '$local_path' does not exist."
+    help
+fi
 
-# Sicherstellen, dass das Zielverzeichnis existiert
-mkdir -p "$local_restore_path"
+# Validate the storage option
+if [ "$storage_option" != "cloud" ] && [ "$storage_option" != "local" ]; then
+    echo "Error: The storage option must be either 'cloud' or 'local'."
+    help
+fi
 
-# Backup aus der Cloud herunterladen
-rclone copy "$cloud_backup_path" "$local_restore_path"
-if [ $? -eq 0 ]; then
-    echo "Backup erfolgreich wiederhergestellt: $local_restore_path"
+# Extract the name of the original folder
+original_folder_name=$(basename "$path_to_backup")
+
+# Perform the restore operation
+if [ "$storage_option" = "cloud" ]; then
+    if ! command -v rclone &> /dev/null; then
+        echo "Error: rclone is not installed. Please install it first."
+        exit 1
+    fi
+    rclone copy "$path_to_backup" "$local_path/$original_folder_name"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to copy data from the cloud."
+        exit 1
+    fi
+    echo "Daten aus der Cloud wiederhergestellt von: $path_to_backup nach: $local_path/$original_folder_name"
 else
-    echo "Fehler beim Wiederherstellen des Backups."
-    exit 1
+    sudo cp -r "$path_to_backup" "$local_path/$original_folder_name"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to copy local data."
+        exit 1
+    fi
+    echo "Lokale Daten wiederhergestellt von: $path_to_backup nach: $local_path/$original_folder_name"
 fi
