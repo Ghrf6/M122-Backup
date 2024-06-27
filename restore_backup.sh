@@ -14,7 +14,7 @@ validate_inputs() {
     fi
 
     # Validate the path for the backup
-    if [[ -z "$path_to_backup" || ! -d "$path_to_backup" ]]; then
+    if [[ ! -d "$path_to_backup" ]]; then
         echo "Error: Please provide a correct path to the backup file."
         help
     fi
@@ -39,7 +39,9 @@ validate_inputs() {
 }
 
 restore_data() {
-    local backup_tomb_file="$path_to_backup"
+    local base_path=$(basename "$path_to_backup")
+    local backup_tomb_file="$path_to_backup/$base_path.tomb"
+    echo "$backup_tomb_file"
 
     # Perform the restore operation
     if [[ "$storage_option" == "cloud" ]]; then
@@ -48,8 +50,7 @@ restore_data() {
             exit 1
         fi
         if rclone copy "$backup_tomb_file" "$target_directory"; then
-            local tomb_file_path="$target_directory/$(basename "$backup_tomb_file")"
-            sudo tomb open "$tomb_file_path" -k "$key_path"
+            sudo tomb open "$backup_tomb_file" -k "$key_path"
             echo "Data restored from the cloud from: $path_to_backup to: $target_directory"
         else
             echo "Error: Failed to copy data from the cloud."
@@ -57,8 +58,7 @@ restore_data() {
         fi
     else
         if sudo cp -r "$backup_tomb_file" "$target_directory"; then
-            local tomb_file_path="$target_directory/$(basename "$backup_tomb_file")"
-            sudo tomb open "$tomb_file_path" -k "$key_path"
+            sudo tomb open "$backup_tomb_file" -k "$key_path"
             echo "Local data restored from: $path_to_backup to: $target_directory"
         else
             echo "Error: Failed to copy local data."
