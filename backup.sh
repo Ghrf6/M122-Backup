@@ -9,13 +9,13 @@ local_backup_base="/home/backup"
 cloud_backup_base="onedrive:/backup"
 
 # Check if rclone is installed
-if ! command -v rclone &> /dev/null; then
+if ! [[ -x $(command -v rclone) ]]; then
     echo "Error: rclone is not installed. Please install it first."
     exit 1
 fi
 
 # Check if directories were found
-if [ ${#backup_dirs[@]} -eq 0 ]; then
+if [[ ${#backup_dirs[@]} -eq 0 ]]; then
     echo "No files found for backup."
     exit 0
 fi

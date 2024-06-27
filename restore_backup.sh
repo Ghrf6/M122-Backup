@@ -11,25 +11,25 @@ help() {
 }
 
 # Check if the correct number of arguments are provided
-if [ "$#" -ne 3 ]; then
+if [[ "$#" -ne 3 ]]; then
     echo "Error: Incorrect number of arguments."
     help
 fi
 
 # Validate the path for the backup
-if [ -z "$path_to_backup" ]; then
+if [[ -z "$path_to_backup" ]]; then
     echo "Error: Please provide a correct path."
     help
 fi
 
 # Validate the local directory
-if [ ! -d "$local_path" ]; then
+if [[ ! -d "$local_path" ]]; then
     echo "Error: The local directory '$local_path' does not exist."
     help
 fi
 
 # Validate the storage option
-if [ "$storage_option" != "cloud" ] && [ "$storage_option" != "local" ]; then
+if [[ "$storage_option" != "cloud" && "$storage_option" != "local" ]]; then
     echo "Error: The storage option must be either 'cloud' or 'local'."
     help
 fi
@@ -38,20 +38,20 @@ fi
 original_folder_name=$(basename "$path_to_backup")
 
 # Perform the restore operation
-if [ "$storage_option" = "cloud" ]; then
-    if ! command -v rclone &> /dev/null; then
+if [[ "$storage_option" == "cloud" ]]; then
+    if ! [[ -x $(command -v rclone) ]]; then
         echo "Error: rclone is not installed. Please install it first."
         exit 1
     fi
     rclone copy "$path_to_backup" "$local_path/$original_folder_name"
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         echo "Error: Failed to copy data from the cloud."
         exit 1
     fi
     echo "Data restored from the cloud from: $path_to_backup to: $local_path/$original_folder_name"
 else
     sudo cp -r "$path_to_backup" "$local_path/$original_folder_name"
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         echo "Error: Failed to copy local data."
         exit 1
     fi
