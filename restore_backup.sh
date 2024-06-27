@@ -39,8 +39,6 @@ validate_inputs() {
 }
 
 restore_data() {
-    # Extract the name of the original folder
-    local original_folder_name=$(basename "$path_to_backup")
 
     # Perform the restore operation
     if [[ "$storage_option" == "cloud" ]]; then
@@ -48,15 +46,15 @@ restore_data() {
             log "Error: rclone is not installed. Please install it first."
             exit 1
         fi
-        if rclone copy "$path_to_backup" "$local_path/$original_folder_name"; then
-            log "Data restored from the cloud from: $path_to_backup to: $local_path/$original_folder_name"
+        if rclone copy "$path_to_backup" "$local_path"; then
+            log "Data restored from the cloud from: $path_to_backup to: $local_path"
         else
             log "Error: Failed to copy data from the cloud."
             exit 1
         fi
     else
-        if sudo cp -r "$path_to_backup" "$local_path/$original_folder_name"; then
-            log "Local data restored from: $path_to_backup to: $local_path/$original_folder_name"
+        if sudo cp -r "$path_to_backup" "$local_path"; then
+            log "Local data restored from: $path_to_backup to: $local_path"
         else
             log "Error: Failed to copy local data."
             exit 1
