@@ -1,0 +1,6 @@
+2024-06-27 10:27:37 - Backup script started.
+2024-06-27 10:27:37 - Local backup created for: /mnt/c/Projects/Test at /home/backup/Test/10_27-2024.06.27
+2024-06-27 10:27:37 - Backup script completed.
+2024-06-27 10:28:49 - Restore script started.
+2024-06-27 10:28:49 - Local data restored from: /home/backup/Test/10_27-2024.06.27 to: /home/restored/test/10_27-2024.06.27
+2024-06-27 10:28:49 - Restore script completed.
