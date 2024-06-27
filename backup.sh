@@ -10,28 +10,54 @@ check_command() {
     fi
 }
 
+encrypt_data() {
+    local data_size="$1"
+    local dest_dir="$2"
+    local key_file="$3"
+    local tomb_name="${dest_dir}.tomb"
+    
+    sudo tomb dig -s "$data_size" "$tomb_name"
+    sudo tomb forge -k "$key_file"
+    sudo tomb lock "$tomb_name" -k "$key_file"
+}
+
 create_backup() {
+    local local_backup_base="/home/backup"
+    local cloud_backup_base="onedrive:/backup"
+    local key_dir="/mnt/c/cert/backup_keys"
+    
     local to_backup_dir="$1"
     local dir_name=$(basename "$to_backup_dir")
+    local timestamp=$(date +"%H_%M-%Y.%m.%d")
     local local_destination="${local_backup_base}/${dir_name}/${timestamp}"
     local cloud_destination="${cloud_backup_base}/${dir_name}/${timestamp}"
-    local data_size=$(du -sh "$to_backup_dir" | cut -f1)
+    local key_file="${key_dir}/${dir_name}_${timestamp}.key"
+    local data_size=$(du -sm "$to_backup_dir" | cut -f1)
+    
+    if [[ "$data_size" -lt 10 ]]; then
+        data_size=10
+    fi
 
+    echo "$data_size"
     if [[ -z "$message" ]]; then
         message="No message was written"
     fi
 
-    # Write backup information to backup.txt
-    echo -e "\n\n$timestamp $data_size $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination <target directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination <target directory> cloud" >> "$to_backup_dir/backup.txt"
+    echo -e "\n\n$timestamp $data_size MB $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination <target directory> local $key_file\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination <target directory> cloud $key_file" >> "$to_backup_dir/backup.txt"
 
-    # Local Backup
-    if sudo mkdir -p "$local_destination" && sudo cp -r "$to_backup_dir"/* "$local_destination"; then
+    sudo mkdir -p "$local_destination"
+    
+    if sudo cp -r "$to_backup_dir"/* "$local_destination"; then
+        encrypt_data "$data_size" "$local_destination" "$key_file"
+        sudo rm -rf "$local_destination"/*
+        sudo mv "${local_destination}.tomb" "$local_destination/"
+        sudo cp "$to_backup_dir/backup.txt" "$local_destination/backup.txt"
         echo "Local backup created for: $to_backup_dir at $local_destination"
     else
         echo "Error: Failed to create local backup for: $to_backup_dir"
+        return
     fi
 
-    # Cloud Backup
     #if rclone copy "$local_destination" "$cloud_destination"; then
     #    echo "Cloud backup created for: $to_backup_dir at $cloud_destination"
     #else
@@ -40,18 +66,14 @@ create_backup() {
 }
 
 main() {
-    # change to the folder path you want the backup to be stored locally
-    local_backup_base="/home/backup"
-    # change to the folder path you want the backup to be stored in the cloud
-    cloud_backup_base="onedrive:/backup"
-    # root folder for your backups
-    root_folder="/mnt/c/Projects"
+    local root_folder="/mnt/c/Projects"
 
     echo "Backup script started."
     readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)
     timestamp=$(date +"%H_%M-%Y.%m.%d")
 
     check_command "rclone"
+    check_command "tomb"
 
     if [[ ${#backup_dirs[@]} -eq 0 ]]; then
         echo "No files found for backup."
@@ -59,7 +81,11 @@ main() {
     fi
 
     for to_backup_dir in "${backup_dirs[@]}"; do
-        create_backup "$to_backup_dir"
+        if [[ -d "$to_backup_dir" ]]; then
+            create_backup "$to_backup_dir"
+        else
+            echo "Error: Directory $to_backup_dir does not exist."
+        fi
     done
 
     echo "Backup script completed."

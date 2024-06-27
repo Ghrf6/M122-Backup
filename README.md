@@ -24,6 +24,12 @@ When WSL is run for the first time, you will be asked to create a user account f
 
 💡 only for Windows user end
 
+## Install tomp for encryption in the shell
+
+```bash
+sudo apt install tomb
+```
+
 ## Install rclone in the shell
 
 ```bash
