@@ -55,86 +55,17 @@ name> onedrive
 
 ```bash
 Type of storage to configure.
-Enter a string value. Press Enter for the default ("").
 Choose a number from below, or type in your own value
- 1 / 1Fichier
-   \ "fichier"
- 2 / Alias for an existing remote
-   \ "alias"
- 3 / Amazon Drive
-   \ "amazon cloud drive"
- 4 / Amazon S3 Compliant Storage Provider (AWS, Alibaba, Ceph, Digital Ocean, Dreamhost, IBM COS, Minio, etc)
-   \ "s3"
- 5 / Backblaze B2
-   \ "b2"
- 6 / Box
-   \ "box"
- 7 / Cache a remote
-   \ "cache"
- 8 / Citrix Sharefile
-   \ "sharefile"
- 9 / Dropbox
-   \ "dropbox"
-10 / Encrypt/Decrypt a remote
-   \ "crypt"
-11 / FTP Connection
-   \ "ftp"
-12 / Google Cloud Storage (this is not Google Drive)
-   \ "google cloud storage"
-13 / Google Drive
-   \ "drive"
-14 / Google Photos
-   \ "google photos"
-15 / Hubic
-   \ "hubic"
-16 / JottaCloud
-   \ "jottacloud"
-17 / Koofr
-   \ "koofr"
-18 / Local Disk
-   \ "local"
-19 / Mail.ru Cloud
-   \ "mailru"
-20 / Microsoft Azure Blob Storage
-   \ "azureblob"
 21 / Microsoft OneDrive
    \ "onedrive"
-22 / OpenDrive
-   \ "opendrive"
-23 / Openstack Swift (Rackspace Cloud Files, Memset Memstore, OVH)
-   \ "swift"
-24 / Pcloud
-   \ "pcloud"
-25 / Put.io
-   \ "putio"
-26 / SSH/SFTP Connection
-   \ "sftp"
-27 / Transparently chunk/split large files
-   \ "chunker"
-28 / Union merges the contents of several remotes
-   \ "union"
-29 / Webdav
-   \ "webdav"
-30 / Yandex Disk
-   \ "yandex"
-31 / http Connection
-   \ "http"
-32 / premiumize.me
-   \ "premiumizeme"
 Storage> 21
 ```
 
 ### Leave the next two empty by pressing enter
 
 ```bash
-** See help for onedrive backend at: https://rclone.org/onedrive/ **
-
-Microsoft App Client Id
-Leave blank normally.
 Enter a string value. Press Enter for the default ("").
 client_id>
-Microsoft App Client Secret
-Leave blank normally.
 Enter a string value. Press Enter for the default ("").
 client_secret>
 ```
@@ -148,13 +79,10 @@ n) No
 y/n> n
 ```
 
-### We will use the remote config
+### We will use the auto config
 
 ```bash
-Remote config
 Use auto config?
- * Say Y if not sure
- * Say N if you are working on a remote or headless machine
 y) Yes
 n) No
 y/n> y
@@ -166,14 +94,6 @@ y/n> y
 Choose a number from below, or type in an existing value
  1 / OneDrive Personal or Business
    \ "onedrive"
- 2 / Root Sharepoint site
-   \ "sharepoint"
- 3 / Type in driveID
-   \ "driveid"
- 4 / Type in SiteID
-   \ "siteid"
- 5 / Search a Sharepoint site
-   \ "search"
 Your choice> 1
 ```
 
@@ -209,18 +129,9 @@ y/e/d> y
 
 ```bash
 Current remotes:
-
 Name                 Type
 ====                 ====
 onedrive             onedrive
-
-e) Edit existing remote
-n) New remote
-d) Delete remote
-r) Rename remote
-c) Copy remote
-s) Set configuration password
-q) Quit config
 e/n/d/r/c/s/q> q
 ```
 
