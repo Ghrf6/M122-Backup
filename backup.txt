@@ -38,3 +38,13 @@ Um die lokalen Daten zu restoren, führe:
 
 Um die Daten aus der Cloud zu restoren, führe:
 	./restore_backup.sh onedrive:/backup/M122-Backup/17_42-2024.06.26 <zielverzeichnis> cloud
+
+
+
+09_36-2024.06.27 108K
+
+Um die lokalen Daten zu restoren, führe:
+	./restore_backup.sh /home/backup/M122-Backup/09_36-2024.06.27 <zielverzeichnis> local
+
+Um die Daten aus der Cloud zu restoren, führe:
+	./restore_backup.sh onedrive:/backup/M122-Backup/09_36-2024.06.27 <zielverzeichnis> cloud

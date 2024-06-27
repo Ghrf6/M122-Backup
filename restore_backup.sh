@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 path_to_backup=$1
 local_path=$2
@@ -15,7 +16,7 @@ if [ "$#" -ne 3 ]; then
     help
 fi
 
-# Validate the path to backup
+# Validate the path for the backup
 if [ -z "$path_to_backup" ]; then
     echo "Error: Please provide a correct path."
     help
@@ -47,12 +48,12 @@ if [ "$storage_option" = "cloud" ]; then
         echo "Error: Failed to copy data from the cloud."
         exit 1
     fi
-    echo "Daten aus der Cloud wiederhergestellt von: $path_to_backup nach: $local_path/$original_folder_name"
+    echo "Data restored from the cloud from: $path_to_backup to: $local_path/$original_folder_name"
 else
     sudo cp -r "$path_to_backup" "$local_path/$original_folder_name"
     if [ $? -ne 0 ]; then
         echo "Error: Failed to copy local data."
         exit 1
     fi
-    echo "Lokale Daten wiederhergestellt von: $path_to_backup nach: $local_path/$original_folder_name"
+    echo "Local data restored from: $path_to_backup to: $local_path/$original_folder_name"
 fi
