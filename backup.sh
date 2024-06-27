@@ -22,7 +22,7 @@ create_backup() {
     local data_size=$(du -sh "$to_backup_dir" | cut -f1)
 
     # Write backup information to backup.txt
-    echo -e "\n\n\n$timestamp $data_size\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination <target_directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination <target_directory> cloud" >> "$to_backup_dir/backup.txt"
+    echo -e "\n\n$timestamp $data_size\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination <target_directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination <target_directory> cloud" >> "$to_backup_dir/backup.txt"
 
     # Local Backup
     if sudo mkdir -p "$local_destination" && sudo cp -r "$to_backup_dir"/* "$local_destination"; then
@@ -40,12 +40,16 @@ create_backup() {
 }
 
 main() {
-    log "Backup script started."
-
-    readarray -t backup_dirs < <(find "/mnt/c/Projects" -name "backup.txt" -exec dirname {} \;)
-    timestamp=$(date +"%H_%M-%Y.%m.%d")
+    # change to the folder path you want the backup to be stored locally
     local_backup_base="/home/backup"
+    # change to the folder path you want the backup to be stored in the cloud
     cloud_backup_base="onedrive:/backup"
+    # root folder for your backups
+    root_folder="/mnt/c/Projects"
+
+    log "Backup script started."
+    readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)
+    timestamp=$(date +"%H_%M-%Y.%m.%d")
 
     check_command "rclone"
 
