@@ -22,20 +22,20 @@ encrypt_data() {
 }
 
 create_backup() {
-    local local_backup_base="/home/backup"
-    local cloud_backup_base="onedrive:/backup"
-    local key_dir="/mnt/c/cert/backup_keys"
+    local local_backup_base="/home/Backup"
+    local cloud_backup_base="onedrive:/Backup"
+    local key_dir="/home/Cert"
     
     local to_backup_dir="$1"
     local dir_name=$(basename "$to_backup_dir")
     local timestamp=$(date +"%H_%M-%Y.%m.%d")
     local local_destination="${local_backup_base}/${dir_name}/${timestamp}"
     local cloud_destination="${cloud_backup_base}/${dir_name}/${timestamp}"
-    local key_file="${key_dir}/${dir_name}_${timestamp}.key"
+    local key_file="${key_dir}/${dir_name}_${timestamp}.tomb.key"
     local data_size=$(du -sm "$to_backup_dir" | cut -f1)
     
     if [[ "$data_size" -lt 10 ]]; then
-        data_size=10
+        data_size=100
     fi
 
     echo "$data_size"
@@ -43,7 +43,7 @@ create_backup() {
         message="No message was written"
     fi
 
-    echo -e "\n\n$timestamp $data_size MB $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination <target directory> local $key_file\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination <target directory> cloud $key_file" >> "$to_backup_dir/backup.txt"
+    echo -e "\n\n$timestamp $data_size MB $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination.tomb <target directory> local $key_file\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination.tomb <target directory> cloud $key_file" >> "$to_backup_dir/backup.txt"
 
     sudo mkdir -p "$local_destination"
     
@@ -58,15 +58,15 @@ create_backup() {
         return
     fi
 
-    #if rclone copy "$local_destination" "$cloud_destination"; then
-    #    echo "Cloud backup created for: $to_backup_dir at $cloud_destination"
-    #else
-    #    echo "Error: Failed to create cloud backup for: $to_backup_dir"
-    #fi
+    if rclone copy "$local_destination" "$cloud_destination"; then
+        echo "Cloud backup created for: $to_backup_dir at $cloud_destination"
+    else
+        echo "Error: Failed to create cloud backup for: $to_backup_dir"
+    fi
 }
 
 main() {
-    local root_folder="/mnt/c/Projects"
+    local root_folder="/mnt/c/Test"
 
     echo "Backup script started."
     readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)

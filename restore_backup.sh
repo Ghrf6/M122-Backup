@@ -51,6 +51,7 @@ restore_data() {
         fi
         if rclone copy "$backup_tomb_file" "$target_directory"; then
             sudo tomb open "$backup_tomb_file" -k "$key_path"
+            tomb close "$backup_tomb_file"
             echo "Data restored from the cloud from: $path_to_backup to: $target_directory"
         else
             echo "Error: Failed to copy data from the cloud."
