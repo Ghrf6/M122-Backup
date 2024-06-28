@@ -14,17 +14,17 @@ encrypt_data() {
     local data_size="$1"
     local dest_dir="$2"
     local key_file="$3"
-    local tomb_name="${dest_dir}.tomb"
+    # local tomb_name="${dest_dir}.tomb"
     
-    sudo tomb dig -s "$data_size" "$tomb_name"
+    sudo tomb dig -s "$data_size" "$dest_dir.tomp"
     sudo tomb forge -k "$key_file"
-    sudo tomb lock "$tomb_name" -k "$key_file"
+    sudo tomb lock "$dest_dir.tomp" -k "$key_file"
 }
 
 create_backup() {
-    local local_backup_base="/home/Backup"
+    local local_backup_base="/mnt/c/Backup"
     local cloud_backup_base="onedrive:/Backup"
-    local key_dir="/home/Cert"
+    local key_dir="/mnt/c/cert/backup_keys"
     
     local to_backup_dir="$1"
     local dir_name=$(basename "$to_backup_dir")
@@ -68,7 +68,6 @@ create_backup() {
 main() {
     local root_folder="/mnt/c/Test"
 
-    echo "Backup script started."
     readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)
     timestamp=$(date +"%H_%M-%Y.%m.%d")
 
@@ -87,8 +86,6 @@ main() {
             echo "Error: Directory $to_backup_dir does not exist."
         fi
     done
-
-    echo "Backup script completed."
 }
 
 main "$@"
