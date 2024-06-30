@@ -15,11 +15,27 @@ check_command() {
 }
 
 encrypt_data() {
-    local dest_dir="$1"
-    encrypted_file="${dest_dir}.enc"
+    local source_dir="$1"
+    local dest_file="$2"
 
-    tar --create --file - --gzip -- "$dest_dir" | \
-    openssl aes-256-cbc -salt -out "$encrypted_file"
+    read -s -p "Enter password for encryption: " password
+    echo
+    read -s -p "Confirm password: " password_confirm
+    echo
+
+    if [ "$password" != "$password_confirm" ]; then
+        echo "Passwords do not match."
+        exit 1
+    fi
+
+    (cd "$source_dir" && sudo tar -czvf - .) | sudo openssl aes-128-cbc -a -salt -pbkdf2 -pass pass:"$password" -out "$dest_file"
+    
+    if [ $? -eq 0 ]; then
+        echo "Data encrypted successfully."
+    else
+        echo "Error: Data encryption failed."
+        exit 1
+    fi
 }
 
 create_backup() {
@@ -38,16 +54,12 @@ create_backup() {
 
     sudo mkdir -p "$local_destination"
     
-    if sudo cp -r "$to_backup_dir"/* "$local_destination"; then
-        encrypt_data "$local_destination"
-        sudo rm -rf "$local_destination"/*
-        sudo mv "${local_destination}.enc" "$local_destination/"
-        sudo cp "$to_backup_dir/backup.txt" "$local_destination/backup.txt"
-        echo "Local backup created for: $to_backup_dir at $local_destination"
-    else
-        echo "Error: Failed to create local backup for: $to_backup_dir"
-        return
-    fi
+    sudo cp -r "$to_backup_dir"/* "$local_destination"
+    encrypt_data "$local_destination" "${local_destination}.enc"
+    sudo rm -rf "$local_destination"/*
+    sudo mv "${local_destination}.enc" "$local_destination/"
+    sudo cp "$to_backup_dir/backup.txt" "$local_destination/backup.txt"
+    echo "Local backup created for: $to_backup_dir at $local_destination"
 
     if rclone copy "$local_destination" "$cloud_destination"; then
         echo "Cloud backup created for: $to_backup_dir at $cloud_destination"
@@ -61,6 +73,7 @@ main() {
     timestamp=$(date +"%H_%M-%Y.%m.%d")
 
     check_command "rclone"
+    check_command "openssl"
 
     if [[ ${#backup_dirs[@]} -eq 0 ]]; then
         echo "No files found for backup."
