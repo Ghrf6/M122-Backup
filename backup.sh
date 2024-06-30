@@ -1,12 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-local_backup_base="/mnt/c/Backup"
-cloud_backup_base="onedrive:/Backup"
+# Standard Backup Pfade
+default_local_backup_base="/mnt/c/Backup"
+default_cloud_backup_base="onedrive:/Backup"
 root_folder="/mnt/c/Test"
 
 message=${1:-}
 
+# Funktionen
 check_command() {
     if ! command -v "$1" &> /dev/null; then
         echo "Error: $1 is not installed. Please install it first."
@@ -67,6 +69,45 @@ create_backup() {
         echo "Error: Failed to create cloud backup for: $to_backup_dir"
     fi
 }
+
+show_help() {
+    echo "Usage: backup.sh [options] [message]"
+    echo
+    echo "Options:"
+    echo "  -l                Specify the local backup base directory (default: $default_local_backup_base)"
+    echo "  -c                Specify the cloud backup base directory (default: $default_cloud_backup_base)"
+    echo "  -h, --help        Show this help message and exit"
+    echo
+    echo "Arguments:"
+    echo "  message           Optional message to include in the backup log"
+    echo
+    exit 0
+}
+
+# Standard Pfade
+local_backup_base="$default_local_backup_base"
+cloud_backup_base="$default_cloud_backup_base"
+
+# Argumente verarbeiten
+while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+        -l)
+            local_backup_base="$2"
+            shift 2
+            ;;
+        -c)
+            cloud_backup_base="$2"
+            shift 2
+            ;;
+        -h|--help)
+            show_help
+            ;;
+        *)
+            message="$1"
+            shift
+            ;;
+    esac
+done
 
 main() {
     readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)
