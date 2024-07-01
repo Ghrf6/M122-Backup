@@ -1,15 +1,35 @@
+# Overview
+
+This script enables the creation of local and cloud backups of files and directories and allows for their restoration when needed. It includes functions to encrypt the data for secure storage and provides an easy way to manage and secure backups.
+
+## Features
+
+### Backup Creation
+
+- **Local Backup:** Creates an encrypted backup on local storage.
+- **Cloud Backup:** Copies the encrypted backup to cloud storage (supported by `rclone`).
+
+### Data Encryption
+
+- The data to be backed up is encrypted with a password of your choosing to prevent unauthorized access.
+
+### Backup Restoration
+
+- **Local Restoration:** Decrypts and restores data from a local backup.
+- **Cloud Restoration:** Decrypts and restores data from a cloud backup.
+
 # Setup
 
-### Clone the repo into your desired Folder
+### Clone the repo into your desired folder
 
 ```powershell
 cd path/to/folder
 git clone https://github.com/Ghrf6/M122-Backup.git
 ```
 
-💡 only for Windows user
+💡 Only for Windows users
 
-### Install WSL (**Windows-Subsystem for Linux) on your mashine**
+### Install WSL (Windows Subsystem for Linux) on your machine
 
 ```powershell
 wsl --install
@@ -20,15 +40,9 @@ When WSL is run for the first time, you will be asked to create a user account f
 - Enter a username.
 - Enter a password and confirm it.
 
-### Open a new WSL command interface you can do that by searching for Ubuntu
+### Open a new WSL command interface by searching for Ubuntu
 
-💡 only for Windows user end
-
-## Install tomp for encryption in the shell
-
-```bash
-sudo apt install tomb
-```
+💡 Only for Windows users end
 
 ## Install rclone in the shell
 
@@ -36,13 +50,13 @@ sudo apt install tomb
 sudo apt install rclone
 ```
 
-### Connect your desired Cloud provider in this case Microsoft OneDrive it
+### Connect your desired cloud provider (in this case, Microsoft OneDrive)
 
 ```bash
 rclone config
 ```
 
-### This will be asked type ‘n’ and press enter
+### This will be asked, type ‘n’ and press enter
 
 ```bash
 n) New remote
@@ -51,23 +65,23 @@ q) Quit config
 n/s/q> n
 ```
 
-### For the name type ‘onedrive’ be carefull its case sensitiv
+### For the name, type ‘onedrive’. Be careful, it's case-sensitive.
 
 ```bash
 name> onedrive
 ```
 
-### Then it will ask you which type of starage you want to use select Microsoft OneDrive by typing ‘21’
+### Then it will ask you which type of storage you want to use. Select Microsoft OneDrive by typing the number next to your desired cloud provider.
 
 ```bash
 Type of storage to configure.
 Choose a number from below, or type in your own value
-21 / Microsoft OneDrive
+n  / Microsoft OneDrive
    \ "onedrive"
-Storage> 21
+Storage> n
 ```
 
-### Leave the next two empty by pressing enter
+### Leave the next two fields empty by pressing enter
 
 ```bash
 Enter a string value. Press Enter for the default ("").
@@ -76,7 +90,7 @@ Enter a string value. Press Enter for the default ("").
 client_secret>
 ```
 
-### Dont edit the advanced config
+### Do not edit the advanced config
 
 ```bash
 Edit advanced config? (y/n)
@@ -85,7 +99,7 @@ n) No
 y/n> n
 ```
 
-### We will use the auto config
+### Use the auto config
 
 ```bash
 Use auto config?
@@ -94,7 +108,7 @@ n) No
 y/n> y
 ```
 
-### Then your browser should open up an you can sign in to youre OneDrive account after that chosse your Onedrive type we use OneDrive Personal or Business so type ‘1’
+### Then your browser should open, and you can sign in to your OneDrive account. After that, choose your OneDrive type. We use OneDrive Personal or Business, so type ‘1’.
 
 ```bash
 Choose a number from below, or type in an existing value
@@ -108,10 +122,10 @@ Your choice> 1
 ```bash
 Found 1 drives, please select the one you want to use:
 0: OneDrive (business) id=xy
-Chose drive to use:> 0
+Choose drive to use:> 0
 ```
 
-### Confirm the next two
+### Confirm the next two prompts
 
 ```bash
 Found drive 'root' of type 'business', URL: https://some/url
@@ -131,7 +145,7 @@ d) Delete this remote
 y/e/d> y
 ```
 
-### Then you should see your current remotes and the option on what to do next the setup is now finished and you can quit with typing ‘q’
+### Then you should see your current remotes and the option on what to do next. The setup is now finished, and you can quit by typing ‘q’.
 
 ```bash
 Current remotes:
@@ -143,25 +157,31 @@ e/n/d/r/c/s/q> q
 
 # Backup
 
-### There are three variabels that you can change in the backup.sh file
+### There are three variables that you can change in the `backup.sh` file
 
-- local_backup_base —> This is the folder path where your local backup is going to be stored
-- cloud_backup_base —> This is the folder path where your cloud backup is going to be stored
-- root_folder —> this is the root folder and every sub folder will be able to be backuped if they contain a backup.txt file
+- `default_local_backup_base` —> This is the folder path where your local backup is going to be stored.
+- `default_cloud_backup_base` —> This is the folder path where your cloud backup is going to be stored.
+- `root_folder` —> This is the root folder, and every subfolder will be backed up if they contain a `backup.txt` file.
 
-### If you want a backup to be created from a folder add a backup.txt file
+### If you want a backup to be created from a folder, add a `backup.txt` file.
 
-### Run the Script in the Shell
+### Run the script in the shell. You can also change the path to your backup and leave a descriptive message for the backup.
 
 ```bash
-./backup.sh "backup message"
+./backup.sh [options] [message]
 ```
 
-### You have created a backup of the folder localy and in the cloud in the backup.txt file there will be the commands on how to properly restore your data
+Options:
+
+- `-l`: Specify the local backup directory (default: /mnt/c/Backup)
+- `-c`: Specify the cloud backup directory (default: onedrive:/Backup)
+- `-h, --help`: Show the help message
+
+### You have created a backup of the folder locally and in the cloud. In the `backup.txt` file, there will be the commands on how to properly restore your data.
 
 # Restoring your data
 
-### If you want to restore the Data go to backup.txt in your backup folder, it will be structured something like this
+### If you want to restore the data, go to `backup.txt` in your backup folder. It will be structured something like this:
 
 ```
 Timestamp, data size, message
@@ -173,10 +193,10 @@ To restore data from the cloud, run:
 	./restore_backup.sh <path to backup> <target_directory> cloud
 ```
 
-### You can simply change the <target_directory> to an existing local directory where you want  your data to get stored and then run the command again
+### You can simply change the `<target_directory>` to an existing local directory where you want your data to be stored and then run the command again:
 
 ```bash
-./restore_backup.sh /home/backup/demo/10_27-2024.06.27 /home/projects/demo local
+./restore_backup.sh <path to backup> <target_directory> local
 # or
-./restore_backup.sh onedrive:/backup/demo/10_27-2024.06.27 /home/projects/demo cloud
+./restore_backup.sh <path to backup> <target_directory> cloud
 ```
