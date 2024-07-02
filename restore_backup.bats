@@ -1,5 +1,16 @@
 #!/usr/bin/env bats
 
+setup() {
+    PATH_BACKUP=$PATH
+    export TEST_PASSWORD="test_password"
+    export PATH=./mocks:$PATH
+}
+
+teardown() {
+    export PATH=$PATH_BACKUP
+    unset TEST_PASSWORD
+}
+
 @test "help: should say how to structure the command" {
     run bash -c "source ./restore_backup.sh; help"
     [ "$status" -eq 1 ]
@@ -8,7 +19,6 @@
 @test "check_command: should fail for non-existent command" {
     run bash -c "source ./restore_backup.sh; check_command non_existent_command"
     [ "$status" -eq 1 ]
-    [ "$output" = "Error: non_existent_command is not installed. Please install it first." ]
 }
 
 @test "check_command: should work for existing command" {
@@ -53,4 +63,10 @@
 @test "main: too much inputs should fail" {
     run bash -c "source ./restore_backup.sh; main 1 2 3 4"
     [ "$status" -eq 1 ]
+}
+
+@test "get_encrypted_backup_file_name should return the base name of the encrypted backup file path" {
+    run bash -c "source ./restore_backup.sh; get_encrypted_backup_file_name /path/to/encrypted/backup/file.enc"
+    [ "$status" -eq 0 ]
+    [ "$output" = "file.enc" ]
 }

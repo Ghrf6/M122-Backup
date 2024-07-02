@@ -39,42 +39,83 @@ validate_inputs() {
     fi
 }
 
+get_encrypted_backup_file_name() {
+    local path_to_encrypted_backup=$1
+    echo "$(basename "$path_to_encrypted_backup")"
+}
+
+prompt_for_password() {
+    if [[ -z "${TEST_PASSWORD:-}" ]]; then
+        read -s -p "Enter password for decryption: " password
+    else
+        password=$TEST_PASSWORD
+    fi
+    echo "$password"
+}
+
+check_command() {
+    local command=$1
+    if ! command -v "$command" &> /dev/null; then
+        echo "Error: $command is not installed."
+        exit 1
+    fi
+}
+
+restore_from_cloud() {
+    local path_to_encrypted_backup=$1
+    local target_directory=$2
+    local secrets_file=$3
+    local password=$4
+
+    check_command "rclone"
+
+    if sudo rclone copy "$path_to_encrypted_backup" "$target_directory"; then
+        sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
+        echo "Data restored from the cloud from: $path_to_encrypted_backup to: $target_directory"
+    else
+        echo "Error: Failed to copy data from the cloud."
+        exit 1
+    fi
+}
+
+restore_from_local() {
+    local path_to_encrypted_backup=$1
+    local target_directory=$2
+    local secrets_file=$3
+    local password=$4
+
+    if sudo cp "$path_to_encrypted_backup" "$target_directory"; then
+        sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
+        echo "Local data restored from: $path_to_encrypted_backup to: $target_directory"
+    else
+        echo "Error: Failed to copy local data."
+        exit 1
+    fi
+}
+
+remove_file() {
+    local file=$1
+    if [[ -f "$file" ]]; then
+        sudo rm "$file"
+    fi
+}
+
 restore_data() {
     local path_to_encrypted_backup=$1
     local target_directory=$2
     local storage_option=$3
 
-    local encrypted_backup_file_name=$(basename "$path_to_encrypted_backup")
+    local encrypted_backup_file_name=$(get_encrypted_backup_file_name "$path_to_encrypted_backup")
     local secrets_file="$target_directory/$encrypted_backup_file_name"
-
-    # Perform the restore operation
-    read -s -p "Enter password for decryption: " password
-    echo
+    local password=$(prompt_for_password)
 
     if [[ "$storage_option" == "cloud" ]]; then
-        check_command "rclone"
-
-        if sudo rclone copy "$path_to_encrypted_backup" "$target_directory"; then
-            sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
-            echo "Data restored from the cloud from: $path_to_encrypted_backup to: $target_directory"
-        else
-            echo "Error: Failed to copy data from the cloud."
-            exit 1
-        fi
+        restore_from_cloud "$path_to_encrypted_backup" "$target_directory" "$secrets_file" "$password"
     else
-        if sudo cp "$path_to_encrypted_backup" "$target_directory"; then
-            sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
-            echo "Local data restored from: $path_to_encrypted_backup to: $target_directory"
-        else
-            echo "Error: Failed to copy local data."
-            exit 1
-        fi
+        restore_from_local "$path_to_encrypted_backup" "$target_directory" "$secrets_file" "$password"
     fi
 
-    # Remove the encrypted file after restoration
-    if [[ -f "$secrets_file" ]]; then
-        sudo rm "$secrets_file"
-    fi
+    remove_file "$secrets_file"
 }
 
 main() {
