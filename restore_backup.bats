@@ -9,6 +9,17 @@ load 'test_helper/bats-assert/load'
     assert_output --partial "Usage: $0 <path to backup> <target directory> <storage option>"
 }
 
+@test "check_command should fail for non-existent command" {
+    run check_command non_existent_command
+    [ "$status" -eq 1 ]
+    [ "$output" = "Error: non_existent_command is not installed. Please install it first." ]
+}
+
+@test "check_command should work for existing command" {
+    run check_command ls
+    [ "$status" -eq 0 ]
+}
+
 @test "validate_inputs too few inputs should fail" {
     run bash -c "source ./restore_backup.sh; validate_inputs"
     [ "$status" -eq 1 ]

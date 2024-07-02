@@ -9,6 +9,14 @@ help() {
     exit 1
 }
 
+check_command() {
+    if ! command -v "$1" &> /dev/null; then
+        echo "Error: $1 is not installed. Please install it first."
+        exit 1
+    fi
+    return 0
+}
+
 validate_inputs() {
     local path_to_encrypted_backup=$1
     local target_directory=$2
@@ -44,10 +52,7 @@ restore_data() {
     echo
 
     if [[ "$storage_option" == "cloud" ]]; then
-        if ! command -v rclone &> /dev/null; then
-            echo "Error: rclone is not installed. Please install it first."
-            exit 1
-        fi
+        check_command "rclone"
 
         if sudo rclone copy "$path_to_encrypted_backup" "$target_directory"; then
             sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"

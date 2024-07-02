@@ -9,7 +9,7 @@ source ./backup.sh
 }
 
 @test "check_command should work for existing command" {
-    run check_command openssl
+    run check_command ls
     [ "$status" -eq 0 ]
 }
 
