@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # Standard Backup Pfade
-default_local_backup_base="/mnt/c/Backup"
+default_local_backup_base="/mnt/c/work/Backup"
 default_cloud_backup_base="onedrive:/Backup"
-root_folder="/mnt/c/Test"
+root_folder="/mnt/c/work/Test"
 
 message=${1:-}
 
