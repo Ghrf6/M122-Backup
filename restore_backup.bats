@@ -70,3 +70,15 @@ teardown() {
     [ "$status" -eq 0 ]
     [ "$output" = "file.enc" ]
 }
+@test "remove_file should remove the file if it exists" {
+    touch /tmp/testfile
+    run bash -c 'source ./restore_backup.sh; remove_file "/tmp/testfile"'
+    [ "$status" -eq 0 ]
+    [ ! -f /tmp/testfile ]
+}
+
+@test "remove_file should do nothing if the file does not exist" {
+    run bash -c 'source ./restore_backup.sh; remove_file "/tmp/nonexistentfile"'
+    [ "$status" -eq 0 ]
+}
+

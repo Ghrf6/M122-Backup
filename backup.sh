@@ -22,7 +22,7 @@ check_command() {
 encrypt_directory() {
     local source_dir="$1"
     local dest_file="$2"
-    
+
     if [[ -z "${TEST_PASSWORD:-}" ]]; then
         read -s -p "Enter password for encryption: " password
         echo
@@ -61,7 +61,7 @@ create_backup_message() {
         message="No message was written"
     fi
 
-    echo -e "\n\n$timestamp MB $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination/$timestamp.enc <target directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination/$timestamp.enc <target directory> cloud" >> "$to_backup_dir/backup.txt"
+    echo -e "\n\n$timestamp $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination/$timestamp.enc <target directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination/$timestamp.enc <target directory> cloud" >> "$to_backup_dir/backup.txt"
 }
 
 create_local_backup() {
