@@ -12,12 +12,14 @@ message=${1:-}
 check_command() {
     if ! command -v "$1" &> /dev/null; then
         echo "Error: $1 is not installed. Please install it first."
-        return 1
+        exit 1
     fi
-    return 0
 }
 
-prompt_for_password() {
+encrypt_data() {
+    local source_dir="$1"
+    local dest_file="$2"
+
     read -s -p "Enter password for encryption: " password
     echo
     read -s -p "Confirm password: " password_confirm
@@ -25,23 +27,16 @@ prompt_for_password() {
 
     if [ "$password" != "$password_confirm" ]; then
         echo "Passwords do not match."
-        return 1
+        exit 1
     fi
-    return 0
-}
-
-encrypt_data() {
-    local source_dir="$1"
-    local dest_file="$2"
-    local password="$3"
 
     (cd "$source_dir" && sudo tar -czvf - .) | sudo openssl aes-128-cbc -a -salt -pbkdf2 -pass pass:"$password" -out "$dest_file"
     
     if [ $? -eq 0 ]; then
-        return 0
+        echo "Data encrypted successfully."
     else
         echo "Error: Data encryption failed."
-        return 1
+        exit 1
     fi
 }
 
@@ -62,11 +57,7 @@ create_backup() {
     sudo mkdir -p "$local_destination"
     
     sudo cp -r "$to_backup_dir"/* "$local_destination"
-    password=$(prompt_for_password)
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-    encrypt_data "$local_destination" "${local_destination}.enc" "$password"
+    encrypt_data "$local_destination" "${local_destination}.enc"
     sudo rm -rf "$local_destination"/*
     sudo mv "${local_destination}.enc" "$local_destination/"
     sudo cp "$to_backup_dir/backup.txt" "$local_destination/backup.txt"
