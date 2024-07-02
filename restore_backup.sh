@@ -3,30 +3,39 @@ set -euo pipefail
 
 help() {
     echo "Usage: $0 <path to backup> <target directory> <storage option>"
+    echo "path to backup: Path to the encrypted backup file."
+    echo "target directory: Directory where the backup should be restored."
+    echo "storage option: Either 'cloud' or 'local'."
     exit 1
 }
 
 validate_inputs() {
-    # Validate the path for the backup
-    if [[ ! -f "$path_to_encrypted_backup" ]]; then
-        echo "Error: Please provide a correct path to the backup file: $path_to_encrypted_backup"
+    local path_to_encrypted_backup=$1
+    local target_directory=$2
+    local storage_option=$3
+
+    if [[ $# -ne 3 ]]; then
         help
     fi
-
+    
     # Validate the target directory
     if [[ ! -d "$target_directory" ]]; then
         echo "Error: The target directory '$target_directory' does not exist."
-        help
+        exit 1
     fi
 
     # Validate the storage option
     if [[ "$storage_option" != "cloud" && "$storage_option" != "local" ]]; then
         echo "Error: The storage option must be either 'cloud' or 'local'."
-        help
+        exit 1
     fi
 }
 
 restore_data() {
+    local path_to_encrypted_backup=$1
+    local target_directory=$2
+    local storage_option=$3
+
     local encrypted_backup_file_name=$(basename "$path_to_encrypted_backup")
     local secrets_file="$target_directory/$encrypted_backup_file_name"
 
@@ -64,16 +73,14 @@ restore_data() {
 }
 
 main() {
-    if [[ "$#" -ne 3 ]]; then
+    if [[ $# -ne 3 ]]; then
         help
     fi
 
-    path_to_encrypted_backup=$1
-    target_directory=$2
-    storage_option=$3
-
-    validate_inputs
-    restore_data
+    validate_inputs "$@"
+    restore_data "$@"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

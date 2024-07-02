@@ -6,6 +6,8 @@ default_local_backup_base="/mnt/c/work/Backup"
 default_cloud_backup_base="onedrive:/Backup"
 root_folder="/mnt/c/work/Test"
 
+local_backup_base="$default_local_backup_base"
+cloud_backup_base="$default_cloud_backup_base"
 message=${1:-}
 
 # Funktionen
@@ -14,6 +16,7 @@ check_command() {
         echo "Error: $1 is not installed. Please install it first."
         exit 1
     fi
+    return 0
 }
 
 encrypt_data() {
@@ -46,13 +49,12 @@ create_backup() {
     local timestamp=$(date +"%H_%M-%Y.%m.%d")
     local local_destination="${local_backup_base}/${dir_name}/${timestamp}"
     local cloud_destination="${cloud_backup_base}/${dir_name}/${timestamp}"
-    local data_size=$(du -sm "$to_backup_dir" | cut -f1)
     
     if [[ -z "$message" ]]; then
         message="No message was written"
     fi
 
-    echo -e "\n\n$timestamp $data_size MB $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination/$timestamp.enc <target directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination/$timestamp.enc <target directory> cloud" >> "$to_backup_dir/backup.txt"
+    echo -e "\n\n$timestamp MB $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination/$timestamp.enc <target directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination/$timestamp.enc <target directory> cloud" >> "$to_backup_dir/backup.txt"
 
     sudo mkdir -p "$local_destination"
     
@@ -84,30 +86,27 @@ show_help() {
     exit 0
 }
 
-# Standard Pfade
-local_backup_base="$default_local_backup_base"
-cloud_backup_base="$default_cloud_backup_base"
-
-# Argumente verarbeiten
-while [[ "$#" -gt 0 ]]; do
-    case "$1" in
-        -l)
-            local_backup_base="$2"
-            shift 2
-            ;;
-        -c)
-            cloud_backup_base="$2"
-            shift 2
-            ;;
-        -h|--help)
-            show_help
-            ;;
-        *)
-            message="$1"
-            shift
-            ;;
-    esac
-done
+test_input_parameters() {
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            -l)
+                local_backup_base="$2"
+                shift 2
+                ;;
+            -c)
+                cloud_backup_base="$2"
+                shift 2
+                ;;
+            -h|--help)
+                show_help
+                ;;
+            *)
+                message="$1"
+                shift
+                ;;
+        esac
+    done
+}
 
 main() {
     readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)
@@ -130,4 +129,7 @@ main() {
     done
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    test_input_parameters "$@"
+    main "$@"
+fi

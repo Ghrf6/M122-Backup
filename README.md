@@ -184,7 +184,7 @@ Options:
 ### If you want to restore the data, go to `backup.txt` in your backup folder. It will be structured something like this:
 
 ```
-Timestamp, data size, message
+Timestamp, message
 
 To restore local data, run:
 	./restore_backup.sh <path to backup> <target_directory> local
