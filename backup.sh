@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # Standard Backup Pfade
-default_local_backup_base="/mnt/c/work/Backup"
+default_local_backup_base="/mnt/c/Backup"
 default_cloud_backup_base="onedrive:/Backup"
-root_folder="/mnt/c/work/Test"
+root_folder="/mnt/c/Test"
 
 local_backup_base="$default_local_backup_base"
 cloud_backup_base="$default_cloud_backup_base"
@@ -36,6 +36,7 @@ encrypt_directory() {
         echo "Passwords do not match."
         exit 1
     fi
+    echo "store your password in a safe place you will need it to restore your data."
 
     (cd "$source_dir" && sudo tar -czvf - .) | sudo openssl aes-128-cbc -a -salt -pbkdf2 -pass pass:"$password" -out "$dest_file"
 }
