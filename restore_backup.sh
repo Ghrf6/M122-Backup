@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# Author: Ghrf6
+# This script restores data from an encrypted backup file to a specified directory.
+# It supports restoring from either local storage or cloud storage.
+
 # Function to display help message and usage instructions
 help() {
     echo "Usage: $0 <path to backup> <target directory> <storage option>"

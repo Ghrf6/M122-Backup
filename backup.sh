@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# Author: Ghrf6
+# This script automates the process of creating backups both locally and to cloud storage.
+# It encrypts the backup files for security and logs the backup details.
+
 # Standard backup paths
 default_local_backup_base="/mnt/c/Backup"
 default_cloud_backup_base="onedrive:/Backup"
