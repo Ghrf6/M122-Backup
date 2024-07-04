@@ -5,6 +5,7 @@ source ./restore_backup.sh
 @test "help: should say how to structure the command" {
     run ./restore_backup.sh help
     [ "$status" -eq 1 ]
+    [[ "$output" == *"Usage: ./restore_backup.sh <path to backup> <target directory> <storage option>"* ]]
 }
 
 @test "check_command: should fail for non-existent command" {
@@ -61,6 +62,7 @@ source ./restore_backup.sh
     [ "$status" -eq 0 ]
     [ "$output" = "file.enc" ]
 }
+
 @test "remove_file should remove the file if it exists" {
     touch /tmp/testfile
     run bash -c 'source ./restore_backup.sh; remove_file "/tmp/testfile"'
