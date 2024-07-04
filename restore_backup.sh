@@ -5,6 +5,8 @@ set -euo pipefail
 # This script restores data from an encrypted backup file to a specified directory.
 # It supports restoring from either local storage or cloud storage.
 
+RCLONE_CONFIG="Path/to/file"  # Update this to the correct path
+
 # Function to display help message and usage instructions
 help() {
     echo "Usage: $0 <path to backup> <target directory> <storage option>"
@@ -80,7 +82,9 @@ restore_from_cloud() {
 
     check_command "rclone"
 
-    if sudo rclone copy "$path_to_encrypted_backup" "$target_directory"; then
+    echo "Starting cloud restore: $path_to_encrypted_backup to $target_directory"
+
+    if sudo rclone --config "$RCLONE_CONFIG" copy "$path_to_encrypted_backup" "$target_directory"; then
         sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
         echo "Data restored from the cloud from: $path_to_encrypted_backup to: $target_directory"
     else
@@ -95,6 +99,8 @@ restore_from_local() {
     local target_directory=$2
     local secrets_file=$3
     local password=$4
+
+    echo "Starting local restore: $path_to_encrypted_backup to $target_directory"
 
     if sudo cp "$path_to_encrypted_backup" "$target_directory"; then
         sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
@@ -122,6 +128,8 @@ restore_data() {
     local encrypted_backup_file_name=$(get_encrypted_backup_file_name "$path_to_encrypted_backup")
     local secrets_file="$target_directory/$encrypted_backup_file_name"
     local password=$(prompt_for_password)
+
+    echo "Restoring backup: $path_to_encrypted_backup to $target_directory using $storage_option storage"
 
     if [[ "$storage_option" == "cloud" ]]; then
         restore_from_cloud "$path_to_encrypted_backup" "$target_directory" "$secrets_file" "$password"
