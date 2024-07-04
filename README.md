@@ -231,4 +231,3 @@ crontab -e
 ### Save and exit the editor
 - For vim, save and exit by typing :wq and pressing Enter.
 - For nano, save and exit by pressing Ctrl+X, then Y, and then Enter.
-
