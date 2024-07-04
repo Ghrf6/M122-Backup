@@ -1,4 +1,4 @@
-# Overview
+# Simple Script for Local and Cloud Backup with Encryption and Decryption
 
 This script enables the creation of local and cloud backups of files and directories and allows for their restoration when needed. It includes functions to encrypt the data for secure storage and provides an easy way to manage and secure backups.
 
@@ -12,8 +12,11 @@ This script enables the creation of local and cloud backups of files and directo
 ![GitHub Stars](https://img.shields.io/github/stars/Ghrf6/M122-Backup?style=social)
 
 
-## Youtube Video
-https://youtu.be/XCC8TcOrr4I
+## Video Tutorial
+
+For a visual walkthrough, you can watch the following YouTube video:
+
+[Watch the video tutorial on YouTube](https://youtu.be/XCC8TcOrr4I)
 
 ## Features
 
