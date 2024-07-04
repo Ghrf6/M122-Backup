@@ -96,11 +96,10 @@ source ./backup.sh
 @test "main: should output 'No files found for backup.' when no files are present" {
     sudo mkdir /tmp/empty
     export root_folder="/tmp/empty"
-    
-    trap 'rm -rf /tmp/empty' EXIT
 
     run main
 
     [ "$status" -eq 0 ]
     [[ "$output" == *"No files found for backup."* ]]
+    rm -rf /tmp/empty
 }
