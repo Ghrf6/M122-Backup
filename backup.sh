@@ -5,9 +5,12 @@ set -euo pipefail
 # This script automates the process of creating backups both locally and to cloud storage.
 # It encrypts the backup files for security and logs the backup details.
 
-local_backup_base="/mnt/c/work/Backup"
-cloud_backup_base="onedrive:/Backup"
+default_local_backup_base="/mnt/c/work/Backup"
+default_cloud_backup_base="onedrive:/Backup"
 root_folder="/mnt/c/work/Test"
+
+local_backup_base="$default_local_backup_base"
+cloud_backup_base="$default_cloud_backup_base"
 message=${1:-}
 
 # Function to check if a command exists
@@ -31,6 +34,7 @@ encrypt_directory() {
         echo
     else
         password=$TEST_PASSWORD
+        password_confirm=$TEST_PASSWORD_CONFIRM
     fi
 
     if [ "$password" != "$password_confirm" ]; then

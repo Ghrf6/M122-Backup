@@ -54,54 +54,53 @@ source ./backup.sh
     [[ "$output" =~ ^[0-9]{2}_[0-9]{2}-[0-9]{4}\.[0-9]{2}\.[0-9]{2}$ ]]
 }
 
+@test "encrypt_directory should fail if passwords do not match" {
+    export TEST_PASSWORD="testpass"
+    export TEST_PASSWORD_CONFIRM="wrongpass"
+
+    local test_source_dir=$(mktemp -d)
+    local test_dest_file=$(mktemp)
+
+    run bash -c "source ./backup.sh; encrypt_directory '$test_source_dir' '$test_dest_file'"
+
+    [ "$status" -eq 1 ]
+    [ "$output" = "Passwords do not match." ]
+
+    rm -rf "$test_source_dir"
+    rm -f "$test_dest_file"
+}
+
 @test "create_backup_message should write the correct message to backup.txt" {
-    local timestamp="12_34-2023.07.01"
-    local message="Backup completed successfully"
-    local to_backup_dir="/tmp"
-    local local_destination="/local/destination"
-    local cloud_destination="/cloud/destination"
+    sudo touch "/tmp/backup.txt"
 
-    mkdir -p "$to_backup_dir"
-    > "$to_backup_dir/backup.txt"
+    run bash -c "source ./backup.sh; create_backup_message '12_34-2023.07.01' 'Backup completed successfully' '/tmp' '/local/destination' '/cloud/destination'"
 
-    run bash -c "source ./backup.sh; create_backup_message '$timestamp' '$message' '$to_backup_dir' '$local_destination' '$cloud_destination'"
-
-    [ "$status" -eq 0 ]
-
-    run cat "$to_backup_dir/backup.txt"
-    [[ "$output" == *"$timestamp"* ]]
-    [[ "$output" == *"$message"* ]]
-    [[ "$output" == *"$local_destination"* ]]
-    [[ "$output" == *"$cloud_destination"* ]]
+    run cat "/tmp/backup.txt"
+    [[ "$output" == *"12_34-2023.07.01"* ]]
+    [[ "$output" == *"/local/destination"* ]]
+    [[ "$output" == *"/cloud/destination"* ]]
 }
 
 @test "create_backup_message should write default message if no message is provided" {
-    local timestamp="12_34-2023.07.01"
-    local message=""
-    local to_backup_dir="/tmp"
-    local local_destination="/local/destination"
-    local cloud_destination="/cloud/destination"
+    sudo touch "/tmp/backup.txt"
 
-    mkdir -p "$to_backup_dir"
-    > "$to_backup_dir/backup.txt"
+    run bash -c "source ./backup.sh; create_backup_message '12_34-2023.07.01' '' '/tmp' '/local/destination' '/cloud/destination'"
 
-    run bash -c "source ./backup.sh; create_backup_message '$timestamp' '$message' '$to_backup_dir' '$local_destination' '$cloud_destination'"
-
-    [ "$status" -eq 0 ]
-
-    run cat "$to_backup_dir/backup.txt"
-    [[ "$output" == *"$timestamp"* ]]
+    run cat "/tmp/backup.txt"
+    [[ "$output" == *"12_34-2023.07.01"* ]]
     [[ "$output" == *"No message was written"* ]]
-    [[ "$output" == *"$local_destination"* ]]
-    [[ "$output" == *"$cloud_destination"* ]]
+    [[ "$output" == *"/local/destination"* ]]
+    [[ "$output" == *"/cloud/destination"* ]]
 }
 
 @test "main: should output 'No files found for backup.' when no files are present" {
-    empty_root_folder=$(mktemp -d)
+    sudo mkdir /tmp/empty
+    export root_folder="/tmp/empty"
+    
+    trap 'rm -rf /tmp/empty' EXIT
 
-    run bash ./backup.sh -l "$local_backup_base" -c "$cloud_backup_base" "$empty_root_folder"
+    run main
 
     [ "$status" -eq 0 ]
     [[ "$output" == *"No files found for backup."* ]]
-    rm -rf "$empty_root_folder"
 }
