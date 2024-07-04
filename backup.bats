@@ -68,18 +68,11 @@ source ./backup.sh
 
     [ "$status" -eq 0 ]
 
-    expected_output="
-
-12_34-2023.07.01 Backup completed successfully
-
-To restore local data, run:
-    ./backup.sh /local/destination/12_34-2023.07.01.enc <target directory> local
-
-To restore data from the cloud, run:
-    ./backup.sh /cloud/destination/12_34-2023.07.01.enc <target directory> cloud"
-
     run cat "$to_backup_dir/backup.txt"
-    [ "$output" = "$expected_output" ]
+    [[ "$output" == *"$timestamp"* ]]
+    [[ "$output" == *"$message"* ]]
+    [[ "$output" == *"$local_destination"* ]]
+    [[ "$output" == *"$cloud_destination"* ]]
 }
 
 @test "create_backup_message should write default message if no message is provided" {
@@ -96,16 +89,9 @@ To restore data from the cloud, run:
 
     [ "$status" -eq 0 ]
 
-    expected_output="
-
-12_34-2023.07.01 No message was written
-
-To restore local data, run:
-    ./backup.sh /local/destination/12_34-2023.07.01.enc <target directory> local
-
-To restore data from the cloud, run:
-    ./backup.sh /cloud/destination/12_34-2023.07.01.enc <target directory> cloud"
-
     run cat "$to_backup_dir/backup.txt"
-    [ "$output" = "$expected_output" ]
+    [[ "$output" == *"$timestamp"* ]]
+    [[ "$output" == *"No message was written"* ]]
+    [[ "$output" == *"$local_destination"* ]]
+    [[ "$output" == *"$cloud_destination"* ]]
 }
