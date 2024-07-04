@@ -189,7 +189,7 @@ Options:
 ```bash
 rclone config file
 ```
-### then change to value of the variabel to the shown path
+### Then change to value of the variabel to the shown path
 
 ### If you want to restore the data, go to `backup.txt` in your backup folder. It will be structured something like this:
 
@@ -210,3 +210,25 @@ To restore data from the cloud, run:
 # or
 ./restore_backup.sh <path to backup> <target_directory> cloud
 ```
+
+# Automate the backup
+
+### To automate a task you can use a cron job
+### Open up the crontab file with the following command: 
+
+```bash
+crontab -e
+```
+### Then select your prefered file editor and in the file add the following
+
+```bash
+30 11 * * * /path/to/backup.sh
+30 16 * * * /path/to/backup.sh
+```
+
+### This will make it so that everyday at 11:30 AM and 4:30 PM it will execute the script and create a backup
+
+### Save and exit the editor
+- For vim, save and exit by typing :wq and pressing Enter.
+- For nano, save and exit by pressing Ctrl+X, then Y, and then Enter.
+
