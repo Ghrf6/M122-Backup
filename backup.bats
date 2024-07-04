@@ -95,3 +95,13 @@ source ./backup.sh
     [[ "$output" == *"$local_destination"* ]]
     [[ "$output" == *"$cloud_destination"* ]]
 }
+
+@test "main: should output 'No files found for backup.' when no files are present" {
+    empty_root_folder=$(mktemp -d)
+
+    run bash ./backup.sh -l "$local_backup_base" -c "$cloud_backup_base" "$empty_root_folder"
+
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"No files found for backup."* ]]
+    rm -rf "$empty_root_folder"
+}

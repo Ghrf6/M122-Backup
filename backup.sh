@@ -163,11 +163,7 @@ main() {
     fi
 
     for to_backup_dir in "${backup_dirs[@]}"; do
-        if [[ -d "$to_backup_dir" ]]; then
-            create_backup "$to_backup_dir"
-        else
-            echo "Error: Directory $to_backup_dir does not exist."
-        fi
+        create_backup "$to_backup_dir"
     done
 }
 
