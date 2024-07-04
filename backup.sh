@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Standard Backup Pfade
+# Standard backup paths
 default_local_backup_base="/mnt/c/Backup"
 default_cloud_backup_base="onedrive:/Backup"
 root_folder="/mnt/c/Test"
@@ -10,7 +10,7 @@ local_backup_base="$default_local_backup_base"
 cloud_backup_base="$default_cloud_backup_base"
 message=${1:-}
 
-# Funktionen
+# Function to check if a command exists
 check_command() {
     if ! command -v "$1" &> /dev/null; then
         echo "Error: $1 is not installed. Please install it first."
@@ -19,6 +19,7 @@ check_command() {
     return 0
 }
 
+# Function to encrypt a directory
 encrypt_directory() {
     local source_dir="$1"
     local dest_file="$2"
@@ -36,21 +37,24 @@ encrypt_directory() {
         echo "Passwords do not match."
         exit 1
     fi
-    echo "store your password in a safe place you will need it to restore your data."
+    echo "Store your password in a safe place. You will need it to restore your data."
 
     (cd "$source_dir" && sudo tar -czvf - .) | sudo openssl aes-128-cbc -a -salt -pbkdf2 -pass pass:"$password" -out "$dest_file"
 }
 
+# Wrapper function for encrypting data
 encrypt_data() {
     local source_dir="$1"
     local dest_file="$2"
     encrypt_directory "$source_dir" "$dest_file"
 }
 
+# Function to get the current timestamp
 get_timestamp() {
     echo "$(date +"%H_%M-%Y.%m.%d")"
 }
 
+# Function to create a backup message
 create_backup_message() {
     local timestamp="$1"
     local message="$2"
@@ -65,6 +69,7 @@ create_backup_message() {
     echo -e "\n\n$timestamp $message\n\nTo restore local data, run:\n\t./restore_backup.sh $local_destination/$timestamp.enc <target directory> local\n\nTo restore data from the cloud, run:\n\t./restore_backup.sh $cloud_destination/$timestamp.enc <target directory> cloud" >> "$to_backup_dir/backup.txt"
 }
 
+# Function to create a local backup
 create_local_backup() {
     local to_backup_dir="$1"
     local local_destination="$2"
@@ -78,6 +83,7 @@ create_local_backup() {
     echo "Local backup created for: $to_backup_dir at $local_destination"
 }
 
+# Function to create a cloud backup using rclone
 create_cloud_backup() {
     local local_destination="$1"
     local cloud_destination="$2"
@@ -88,6 +94,7 @@ create_cloud_backup() {
     fi
 }
 
+# Main function to create a backup
 create_backup() {
     local to_backup_dir="$1"
     local dir_name=$(basename "$to_backup_dir")
@@ -100,7 +107,7 @@ create_backup() {
     create_cloud_backup "$local_destination" "$cloud_destination"
 }
 
-
+# Function to display help message
 show_help() {
     echo "Usage: backup.sh [options] [message]"
     echo
@@ -115,6 +122,7 @@ show_help() {
     exit 0
 }
 
+# Function to parse input parameters
 test_input_parameters() {
     while [[ "$#" -gt 0 ]]; do
         case "$1" in
@@ -137,6 +145,7 @@ test_input_parameters() {
     done
 }
 
+# Main function to run the backup script
 main() {
     readarray -t backup_dirs < <(find "$root_folder" -name "backup.txt" -exec dirname {} \;)
     timestamp=$(date +"%H_%M-%Y.%m.%d")
@@ -158,6 +167,7 @@ main() {
     done
 }
 
+# Entry point of the script
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     test_input_parameters "$@"
     main "$@"

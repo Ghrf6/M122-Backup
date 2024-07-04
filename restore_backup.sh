@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+# Function to display help message and usage instructions
 help() {
     echo "Usage: $0 <path to backup> <target directory> <storage option>"
     echo "path to backup: Path to the encrypted backup file."
@@ -9,6 +10,7 @@ help() {
     exit 1
 }
 
+# Function to check if a command exists
 check_command() {
     if ! command -v "$1" &> /dev/null; then
         echo "Error: $1 is not installed. Please install it first."
@@ -17,6 +19,7 @@ check_command() {
     return 0
 }
 
+# Function to validate input parameters
 validate_inputs() {
     local path_to_encrypted_backup=$1
     local target_directory=$2
@@ -39,11 +42,13 @@ validate_inputs() {
     fi
 }
 
+# Function to get the name of the encrypted backup file
 get_encrypted_backup_file_name() {
     local path_to_encrypted_backup=$1
     echo "$(basename "$path_to_encrypted_backup")"
 }
 
+# Function to prompt for password
 prompt_for_password() {
     if [[ -z "${TEST_PASSWORD:-}" ]]; then
         read -s -p "Enter password for decryption: " password
@@ -53,6 +58,7 @@ prompt_for_password() {
     echo "$password"
 }
 
+# Check if the required command is installed
 check_command() {
     local command=$1
     if ! command -v "$command" &> /dev/null; then
@@ -61,6 +67,7 @@ check_command() {
     fi
 }
 
+# Function to restore data from the cloud
 restore_from_cloud() {
     local path_to_encrypted_backup=$1
     local target_directory=$2
@@ -78,6 +85,7 @@ restore_from_cloud() {
     fi
 }
 
+# Function to restore data from a local backup
 restore_from_local() {
     local path_to_encrypted_backup=$1
     local target_directory=$2
@@ -93,6 +101,7 @@ restore_from_local() {
     fi
 }
 
+# Function to remove a file
 remove_file() {
     local file=$1
     if [[ -f "$file" ]]; then
@@ -100,6 +109,7 @@ remove_file() {
     fi
 }
 
+# Main function to restore data
 restore_data() {
     local path_to_encrypted_backup=$1
     local target_directory=$2
@@ -118,6 +128,7 @@ restore_data() {
     remove_file "$secrets_file"
 }
 
+# Main entry point of the script
 main() {
     if [[ $# -ne 3 ]]; then
         help
@@ -127,6 +138,7 @@ main() {
     restore_data "$@"
 }
 
+# Ensure the script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi
