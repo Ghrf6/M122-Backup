@@ -1,23 +1,14 @@
 #!/usr/bin/env bats
 
-setup() {
-    PATH_BACKUP=$PATH
-    export TEST_PASSWORD="test_password"
-    export PATH=./mocks:$PATH
-}
-
-teardown() {
-    export PATH=$PATH_BACKUP
-    unset TEST_PASSWORD
-}
+source ./restore_backup.sh
 
 @test "help: should say how to structure the command" {
-    run bash -c "source ./restore_backup.sh; help"
+    run ./restore_backup.sh help
     [ "$status" -eq 1 ]
 }
 
 @test "check_command: should fail for non-existent command" {
-    run bash -c "source ./restore_backup.sh; check_command non_existent_command"
+    run ./restore_backup.sh check_command non_existent_command
     [ "$status" -eq 1 ]
 }
 
@@ -27,12 +18,12 @@ teardown() {
 }
 
 @test "validate_inputs: too few inputs should fail" {
-    run bash -c "source ./restore_backup.sh; validate_inputs"
+    run ./restore_backup.sh validate_inputs
     [ "$status" -eq 1 ]
 }
 
 @test "validate_inputs: too much inputs should fail" {
-    run bash -c "source ./restore_backup.sh; validate_inputs 1 2 3 4"
+    run ./restore_backup.sh validate_inputs 1 2 3 4
     [ "$status" -eq 1 ]
 }
 
@@ -56,12 +47,12 @@ teardown() {
 }
 
 @test "main: too few inputs should fail" {
-    run bash -c "source ./restore_backup.sh; main"
+    run ./restore_backup.sh main
     [ "$status" -eq 1 ]
 }
 
 @test "main: too much inputs should fail" {
-    run bash -c "source ./restore_backup.sh; main 1 2 3 4"
+    run ./restore_backup.sh main 1 2 3 4
     [ "$status" -eq 1 ]
 }
 
@@ -81,4 +72,3 @@ teardown() {
     run bash -c 'source ./restore_backup.sh; remove_file "/tmp/nonexistentfile"'
     [ "$status" -eq 0 ]
 }
-
