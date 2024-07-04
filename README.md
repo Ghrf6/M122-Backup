@@ -2,6 +2,9 @@
 
 This script enables the creation of local and cloud backups of files and directories and allows for their restoration when needed. It includes functions to encrypt the data for secure storage and provides an easy way to manage and secure backups.
 
+## Youtube Video
+https://youtu.be/XCC8TcOrr4I
+
 ## Features
 
 ### Backup Creation
