@@ -101,5 +101,5 @@ source ./backup.sh
 
     [ "$status" -eq 0 ]
     [[ "$output" == *"No files found for backup."* ]]
-    rm -rf /tmp/empty
+    sudo rm -rf /tmp/empty
 }
