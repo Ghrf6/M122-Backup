@@ -1,5 +1,23 @@
 #!/usr/bin/env bats
 
+setup(){
+    export TEST_PASSWORD="testpass"
+    export TEST_PASSWORD_CONFIRM="wrongpass"
+    test_source_dir=$(mktemp -d)
+    test_dest_file=$(mktemp)
+    touch "/tmp/backup.txt"
+    mkdir /tmp/empty
+}
+
+teardown(){
+    unset TEST_PASSWORD
+    unset TEST_PASSWORD_CONFIRM
+    rm -rf "$test_source_dir"
+    rm -f "$test_dest_file"
+    rm -f "/tmp/backup.txt"
+    rm -rf /tmp/empty
+}
+
 source ./backup.sh
 
 @test "check_command should fail for non-existent command" {
@@ -55,11 +73,7 @@ source ./backup.sh
 }
 
 @test "encrypt_directory should fail if passwords do not match" {
-    export TEST_PASSWORD="testpass"
-    export TEST_PASSWORD_CONFIRM="wrongpass"
 
-    local test_source_dir=$(mktemp -d)
-    local test_dest_file=$(mktemp)
 
     run bash -c "source ./backup.sh; encrypt_directory '$test_source_dir' '$test_dest_file'"
 
@@ -71,22 +85,18 @@ source ./backup.sh
 }
 
 @test "create_backup_message should write the correct message to backup.txt" {
-    sudo touch "/tmp/backup.txt"
-
     run bash -c "source ./backup.sh; create_backup_message '12_34-2023.07.01' 'Backup completed successfully' '/tmp' '/local/destination' '/cloud/destination'"
-
     run cat "/tmp/backup.txt"
+
     [[ "$output" == *"12_34-2023.07.01"* ]]
     [[ "$output" == *"/local/destination"* ]]
     [[ "$output" == *"/cloud/destination"* ]]
 }
 
 @test "create_backup_message should write default message if no message is provided" {
-    sudo touch "/tmp/backup.txt"
-
     run bash -c "source ./backup.sh; create_backup_message '12_34-2023.07.01' '' '/tmp' '/local/destination' '/cloud/destination'"
-
     run cat "/tmp/backup.txt"
+
     [[ "$output" == *"12_34-2023.07.01"* ]]
     [[ "$output" == *"No message was written"* ]]
     [[ "$output" == *"/local/destination"* ]]
@@ -94,12 +104,10 @@ source ./backup.sh
 }
 
 @test "main: should output 'No files found for backup.' when no files are present" {
-    sudo mkdir /tmp/empty
     export root_folder="/tmp/empty"
 
     run main
 
     [ "$status" -eq 0 ]
     [[ "$output" == *"No files found for backup."* ]]
-    sudo rm -rf /tmp/empty
 }

@@ -2,6 +2,16 @@
 
 source ./restore_backup.sh
 
+setup(){
+    mkdir -p valid_directory
+    touch /tmp/testfile
+}
+
+teardown(){
+    rm -rf valid_directory
+    rm -f /tmp/testfile
+}
+
 @test "help: should say how to structure the command" {
     run ./restore_backup.sh help
     [ "$status" -eq 1 ]
@@ -41,10 +51,8 @@ source ./restore_backup.sh
 }
 
 @test "validate_inputs: with valid inputs should succeed" {
-    mkdir -p valid_directory
     run bash -c "source ./restore_backup.sh; validate_inputs test valid_directory local"
     [ "$status" -eq 0 ]
-    rm -rf valid_directory
 }
 
 @test "main: too few inputs should fail" {
@@ -64,7 +72,7 @@ source ./restore_backup.sh
 }
 
 @test "remove_file should remove the file if it exists" {
-    touch /tmp/testfile
+
     run bash -c 'source ./restore_backup.sh; remove_file "/tmp/testfile"'
     [ "$status" -eq 0 ]
     [ ! -f /tmp/testfile ]

@@ -46,13 +46,6 @@ encrypt_directory() {
     (cd "$source_dir" && sudo tar -czvf - .) | sudo openssl aes-128-cbc -a -salt -pbkdf2 -pass pass:"$password" -out "$dest_file"
 }
 
-# Wrapper function for encrypting data
-encrypt_data() {
-    local source_dir="$1"
-    local dest_file="$2"
-    encrypt_directory "$source_dir" "$dest_file"
-}
-
 # Function to get the current timestamp
 get_timestamp() {
     echo "$(date +"%H_%M-%Y.%m.%d")"
@@ -80,7 +73,7 @@ create_local_backup() {
 
     sudo mkdir -p "$local_destination"
     sudo cp -r "$to_backup_dir"/* "$local_destination"
-    encrypt_data "$local_destination" "${local_destination}.enc"
+    encrypt_directory "$local_destination" "${local_destination}.enc"
     sudo rm -rf "$local_destination"/*
     sudo mv "${local_destination}.enc" "$local_destination/"
     sudo cp "$to_backup_dir/backup.txt" "$local_destination/backup.txt"
