@@ -5,9 +5,9 @@ set -euo pipefail
 # This script automates the process of creating backups both locally and to cloud storage.
 # It encrypts the backup files for security and logs the backup details.
 
-default_local_backup_base="/mnt/c/work/Backup"
+default_local_backup_base="/mnt/c/Backup"
 default_cloud_backup_base="onedrive:/Backup"
-root_folder="/mnt/c/work/Test"
+root_folder="/mnt/c/Test"
 
 local_backup_base="$default_local_backup_base"
 cloud_backup_base="$default_cloud_backup_base"

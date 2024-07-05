@@ -5,7 +5,7 @@ set -euo pipefail
 # This script restores data from an encrypted backup file to a specified directory.
 # It supports restoring from either local storage or cloud storage.
 
-RCLONE_CONFIG="Path/to/file"  # Update this to the correct path
+RCLONE_CONFIG="Path/to/file"  # Update this to the correct path with rclone config file
 
 # Function to display help message and usage instructions
 help() {
