@@ -191,13 +191,6 @@ Options:
 
 # Restoring your data
 
-### First you need to change the RCLONE_CONFIG variabel to the correct path you can do that by typing in this command:
-
-```bash
-rclone config file
-```
-### Then change to value of the variabel to the shown path
-
 ### If you want to restore the data, go to `backup.txt` in your backup folder. It will be structured something like this:
 
 ```
