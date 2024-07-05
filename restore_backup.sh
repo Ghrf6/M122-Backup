@@ -5,7 +5,14 @@ set -euo pipefail
 # This script restores data from an encrypted backup file to a specified directory.
 # It supports restoring from either local storage or cloud storage.
 
-RCLONE_CONFIG="/home/ghrf6/.config/rclone/rclone.conf"  # Update this to the correct path with rclone config file
+# Function to get the rclone configuration file path
+get_rclone_config() {
+    local config_path
+    config_path=$(rclone config file 2>/dev/null | tail -n 1 | xargs)
+    echo "$config_path"
+}
+
+rclone_config=$(get_rclone_config)
 
 # Function to display help message and usage instructions
 help() {
@@ -84,7 +91,7 @@ restore_from_cloud() {
 
     echo "Starting cloud restore: $path_to_encrypted_backup to $target_directory"
 
-    if sudo rclone --config "$RCLONE_CONFIG" copy "$path_to_encrypted_backup" "$target_directory"; then
+    if sudo rclone --config "$rclone_config" copy "$path_to_encrypted_backup" "$target_directory"; then
         sudo openssl aes-128-cbc -d -a -pbkdf2 -pass pass:"$password" -in "$secrets_file" | sudo tar -xzvf - -C "$target_directory"
         echo "Data restored from the cloud from: $path_to_encrypted_backup to: $target_directory"
     else

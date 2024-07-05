@@ -12,6 +12,12 @@ teardown(){
     rm -f /tmp/testfile
 }
 
+@test "get_rclone_config: should return the path to rclone config file" {
+    run bash -c "source ./restore_backup.sh; get_rclone_config"
+    [ "$status" -eq 0 ]
+    [ -n "$output" ]
+}
+
 @test "help: should say how to structure the command" {
     run ./restore_backup.sh help
     [ "$status" -eq 1 ]
