@@ -227,6 +227,16 @@ To restore data from the cloud, run:
 ./restore_backup.sh <path to backup> <target_directory> cloud
 ```
 
+# Example
+backup
+```bash
+./backup.sh -l /mnt/c/Backup -c onedrive:/Backup
+```
+restore
+```bash
+./restore_backup.sh onedrive:/Backup/Test/11_02-2024.07.04/11_02-2024.07.04.enc /home/Backup cloud
+```
+
 # Automate the backup
 
 ### To automate a task you can use a cron job
