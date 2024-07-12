@@ -171,7 +171,7 @@ main() {
 }
 
 # Entry point of the script
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ "${BASH_SOURCE[0]:-}" == "${0}" ]]; then
     test_input_parameters "$@"
     main "$@"
 fi
