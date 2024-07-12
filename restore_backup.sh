@@ -16,10 +16,21 @@ rclone_config=$(get_rclone_config)
 
 # Function to display help message and usage instructions
 help() {
-    echo "Usage: $0 <path to backup> <target directory> <storage option>"
-    echo "path to backup: Path to the encrypted backup file."
-    echo "target directory: Directory where the backup should be restored."
-    echo "storage option: Either 'cloud' or 'local'."
+    echo "Usage: restore_backup.sh <path to backup> <target directory> <storage option>"
+    echo
+    echo "This script restores data from an encrypted backup file to a specified directory."
+    echo "It supports restoring from either local storage or cloud storage."
+    echo
+    echo "Arguments:"
+    echo "  path to backup        Path to the encrypted backup file."
+    echo "  target directory      Directory where the backup should be restored."
+    echo "  storage option        Either 'cloud' or 'local'."
+    echo
+    echo "Examples:"
+    echo "  ./restore_backup.sh /mnt/c/Backup/2023-07-12_10_00.enc /mnt/c/Restore local"
+    echo "  ./restore_backup.sh onedrive:/Backup/2023-07-12_10_00.enc /mnt/c/Restore cloud"
+    echo "  ./restore_backup.sh -h"
+    echo "  ./restore_backup.sh --help"
     exit 1
 }
 
@@ -69,15 +80,6 @@ prompt_for_password() {
         password=$TEST_PASSWORD
     fi
     echo "$password"
-}
-
-# Check if the required command is installed
-check_command() {
-    local command=$1
-    if ! command -v "$command" &> /dev/null; then
-        echo "Error: $command is not installed."
-        exit 1
-    fi
 }
 
 # Function to restore data from the cloud

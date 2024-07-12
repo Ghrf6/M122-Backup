@@ -108,14 +108,22 @@ create_backup() {
 show_help() {
     echo "Usage: backup.sh [options] [message]"
     echo
+    echo "This script automates the process of creating backups both locally and to cloud storage."
+    echo "It encrypts the backup files for security and logs the backup details."
+    echo
     echo "Options:"
-    echo "  -l                Specify the local backup base directory (default: $default_local_backup_base)"
-    echo "  -c                Specify the cloud backup base directory (default: $default_cloud_backup_base)"
-    echo "  -h, --help        Show this help message and exit"
+    echo "  -l, --local-dir    Specify the local backup base directory (default: $default_local_backup_base)"
+    echo "  -c, --cloud-dir    Specify the cloud backup base directory (default: $default_cloud_backup_base)"
+    echo "  -h, --help         Show this help message and exit"
     echo
     echo "Arguments:"
-    echo "  message           Optional message to include in the backup log"
+    echo "  message            Optional message to include in the backup log"
     echo
+    echo "Examples:"
+    echo "  ./backup.sh -l /mnt/d/Backup -c google:/Backup 'Daily backup'"
+    echo "  ./backup.sh --local-dir /mnt/d/Backup --cloud-dir google:/Backup 'Weekly backup'"
+    echo "  ./backup.sh -h"
+    echo "  ./backup.sh --help"
     exit 0
 }
 
@@ -123,11 +131,11 @@ show_help() {
 test_input_parameters() {
     while [[ "$#" -gt 0 ]]; do
         case "$1" in
-            -l)
+            -l|--local-dir)
                 local_backup_base="$2"
                 shift 2
                 ;;
-            -c)
+            -c|--cloud-dir)
                 cloud_backup_base="$2"
                 shift 2
                 ;;
