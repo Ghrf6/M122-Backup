@@ -16,7 +16,7 @@ rclone_config=$(get_rclone_config)
 
 # Function to display help message and usage instructions
 help() {
-    echo "Usage: restore_backup.sh <path to backup> <target directory> <storage option>"
+    echo "Usage: ./restore_backup.sh <path to backup> <target directory> <storage option>"
     echo
     echo "This script restores data from an encrypted backup file to a specified directory."
     echo "It supports restoring from either local storage or cloud storage."
@@ -69,13 +69,14 @@ validate_inputs() {
 # Function to get the name of the encrypted backup file
 get_encrypted_backup_file_name() {
     local path_to_encrypted_backup=$1
-    echo "$(basename "$path_to_encrypted_backup")"
+    basename "$path_to_encrypted_backup"
 }
 
 # Function to prompt for password
 prompt_for_password() {
     if [[ -z "${TEST_PASSWORD:-}" ]]; then
-        read -s -p "Enter password for decryption: " password
+        read -r -s -p "Enter password for decryption: " password
+        echo
     else
         password=$TEST_PASSWORD
     fi
@@ -134,9 +135,11 @@ restore_data() {
     local target_directory=$2
     local storage_option=$3
 
-    local encrypted_backup_file_name=$(get_encrypted_backup_file_name "$path_to_encrypted_backup")
+    local encrypted_backup_file_name
+    encrypted_backup_file_name=$(get_encrypted_backup_file_name "$path_to_encrypted_backup")
     local secrets_file="$target_directory/$encrypted_backup_file_name"
-    local password=$(prompt_for_password)
+    local password
+    password=$(prompt_for_password)
 
     echo "Restoring backup: $path_to_encrypted_backup to $target_directory using $storage_option storage"
 

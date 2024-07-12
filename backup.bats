@@ -20,6 +20,11 @@ teardown(){
 
 source ./backup.sh
 
+@test "shellcheck backup.sh" {
+    run shellcheck ./backup.sh
+    [ "$status" -eq 0 ]
+}
+
 @test "check_command should fail for non-existent command" {
     run check_command non_existent_command
     [ "$status" -eq 1 ]

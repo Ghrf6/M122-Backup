@@ -28,9 +28,9 @@ encrypt_directory() {
     local dest_file="$2"
 
     if [[ -z "${TEST_PASSWORD:-}" ]]; then
-        read -s -p "Enter password for encryption: " password
+        read -r -s -p "Enter password for encryption: " password
         echo
-        read -s -p "Confirm password: " password_confirm
+        read -r -s -p "Confirm password: " password_confirm
         echo
     else
         password=$TEST_PASSWORD
@@ -48,7 +48,7 @@ encrypt_directory() {
 
 # Function to get the current timestamp
 get_timestamp() {
-    echo "$(date +"%H_%M-%Y.%m.%d")"
+    date +"%H_%M-%Y.%m.%d"
 }
 
 # Function to create a backup message
@@ -94,8 +94,10 @@ create_cloud_backup() {
 # Main function to create a backup
 create_backup() {
     local to_backup_dir="$1"
-    local dir_name=$(basename "$to_backup_dir")
-    local timestamp=$(get_timestamp)
+    local dir_name
+    dir_name=$(basename "$to_backup_dir")
+    local timestamp
+    timestamp=$(get_timestamp)
     local local_destination="${local_backup_base}/${dir_name}/${timestamp}"
     local cloud_destination="${cloud_backup_base}/${dir_name}/${timestamp}"
 
