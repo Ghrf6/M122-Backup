@@ -6,6 +6,22 @@ This script enables the creation of local and cloud backups of files and directo
 ![Contributors](https://img.shields.io/github/contributors/Ghrf6/M122-Backup)
 ![Issues](https://img.shields.io/github/issues/Ghrf6/M122-Backup)
 
+## Table of Contents
+
+- [Video Tutorial](#video-tutorial)
+- [Features](#features)
+  - [Backup Creation](#backup-creation)
+  - [Data Encryption](#data-encryption)
+  - [Backup Restoration](#backup-restoration)
+- [Setup](#setup)
+  - [Clone the Repo](#clone-the-repo)
+  - [Install WSL (Windows Only)](#install-wsl-windows-only)
+  - [Install rclone](#install-rclone)
+  - [Connect Cloud Provider](#connect-cloud-provider)
+- [Backup](#backup)
+- [Restoring Your Data](#restoring-your-data)
+- [Automate the Backup](#automate-the-backup)
+
 ## Video Tutorial
 
 For a visual walkthrough, you can watch the following YouTube video:
@@ -30,7 +46,7 @@ For a visual walkthrough, you can watch the following YouTube video:
 
 # Setup
 
-### Clone the repo into your desired folder
+### Clone the repo
 
 ```powershell
 cd path/to/folder
@@ -39,7 +55,7 @@ git clone https://github.com/Ghrf6/M122-Backup.git
 
 💡 Only for Windows users
 
-### Install WSL (Windows Subsystem for Linux) on your machine
+### Install WSL (Windows Only)
 
 ```powershell
 wsl --install
@@ -54,13 +70,13 @@ When WSL is run for the first time, you will be asked to create a user account f
 
 💡 Only for Windows users end
 
-## Install rclone in the shell
+## Install rclone
 
 ```bash
 sudo apt install rclone
 ```
 
-### Connect your desired cloud provider (in this case, Microsoft OneDrive)
+### Connect Cloud Provider
 
 ```bash
 rclone config
