@@ -4,7 +4,6 @@ This script enables the creation of local and cloud backups of files and directo
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Contributors](https://img.shields.io/github/contributors/Ghrf6/M122-Backup)
-![Issues](https://img.shields.io/github/issues/Ghrf6/M122-Backup)
 
 ## Table of Contents
 
